@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Solver</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script>window.API_BASE = 'https://your-backend-domain.com/api';</script>
+    <script defer src="/app.client.js"></script>
+</head>
+<body>
+    <h1>Wordle Solver</h1>
+    <div id="start-options">
+        <button id="create-game-btn" type="button">Create Game</button>
+        <button id="join-game-btn" type="button">Join Game</button>
+    </div>
+        <button id="back-btn" class="hidden" type="button" style="position: absolute; top: 16px; left: 16px; z-index: 100; padding: 8px 16px; font-size: 1em;">Back</button>
+
+    <form id="length-form" class="hidden" autocomplete="off">
+        <label for="length">Choose word length:</label>
+        <select name="length" id="length" required aria-label="Select word length">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" selected>5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="25">25</option>
+        </select>
+        <input type="submit" value="Next" aria-label="Continue to attempts">
+    </form>
+
+    <form id="join-form" class="hidden" autocomplete="off">
+        <label for="join-code">Enter game code:</label>
+        <input type="text" id="join-code" name="join-code" placeholder="Game code" required autocomplete="off">
+        <input type="submit" value="Join Game">
+    </form>
+
+    <form id="attempts-form" class="hidden" autocomplete="off">
+        <label for="attempts">Choose number of attempts:</label>
+        <select name="attempts" id="attempts" required aria-label="Select number of attempts">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6" selected>6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+        </select>
+        <input type="submit" value="Next" aria-label="Continue to prefix">
+    </form>
+
+    <form id="prefix-form" class="hidden" autocomplete="off">
+        <label for="prefix-input">Enter word prefix:</label>
+        <input type="text" id="prefix-input" placeholder="Type letters..." autocomplete="off">
+        <div class="word-list hidden" id="suggestions-panel">
+            <label for="suggestions">Select a word to start the game:</label>
+            <select id="suggestions" size="10" required aria-label="Word suggestions"></select>
+            <input type="submit" value="Start Game">
+        </div>
+    </form>
+
+    <div id="game-section" class="hidden">
+        <div id="board" class="board normal-width"></div>
+        <div id="share-code" class="hidden info-box">Share Code: <span id="code-text"></span> (expires in 1 hour)</div>
+        <div id="error-box" class="info-box hidden"></div>
+        <div id="possibilities" class="info-box hidden"></div>
+        <div id="solver-status" class="info-box hidden"></div>
+        <div id="game-result" class="game-over hidden"></div>
+        <button id="new-game-link" class="hidden">New Game</button>
+        <div id="solve-buttons" style="margin-top: 20px;">
+            <button type="button" id="solve-fast" style="padding: 12px 24px; background-color: #538d4e; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: bold; cursor: pointer; margin-right: 10px;">Solve Fast</button>
+            <button type="button" id="solve-efficient" style="padding: 12px 24px; background-color: #b59f3b; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: bold; cursor: pointer; margin-right: 10px;">Solve Efficient</button>
+            <button type="button" id="share-game" style="padding: 12px 24px; background-color: #4a90e2; color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: bold; cursor: pointer;">Share Game</button>
+        </div>
+        <form id="guess-form" class="hidden" autocomplete="off">
+            <label for="guess-input" class="hidden">Enter guess</label>
+            <input id="guess-input" name="guess" type="text" minlength="1" maxlength="30" class="hidden" autocomplete="off">
+        </form>
+    </div>
+</body>
+</html>

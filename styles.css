@@ -1,0 +1,628 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121213;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1 {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 2.5em;
+}
+
+form {
+    margin: 20px auto;
+    max-width: 500px;
+    background: #1a1a1b;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.hidden {
+    display: none !important;
+}
+
+label {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+select, input[type="text"], input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px solid #565758;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1em;
+    background-color: #121213;
+    color: white;
+}
+
+select:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: #6aaa64;
+}
+
+input[type="submit"] {
+    background-color: #6aaa64;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #5a9a54;
+}
+
+.board {
+    display: block;
+    margin: 30px auto;
+    padding: 20px;
+    background: #1a1a1b;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    max-width: 95vw;
+}
+
+/* Default board (word length <= 10) - centered with normal sizing */
+.board.normal-width {
+    max-width: 700px;
+}
+
+/* Long board (word length > 10) - enable horizontal scrolling */
+.board.long-word {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 95vw;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+    gap: 4px;
+}
+
+/* Long word rows - fixed size cells, no shrinking */
+.board.long-word .row {
+    justify-content: flex-start;
+    min-width: max-content;
+}
+
+.cell {
+    /* Responsive sizing: shrink on small screens, cap at desktop size */
+    width: clamp(40px, 12vw, 62px);
+    height: clamp(40px, 12vw, 62px);
+    border: 2px solid #3a3a3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.2em, 4vw, 2em);
+    font-weight: bold;
+    margin: 0 4px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    animation: pop 0.1s ease-in-out;
+}
+
+/* For long words, keep cells at fixed size (62px) */
+.board.long-word .cell {
+    width: 62px;
+    height: 62px;
+    min-width: 62px;
+    min-height: 62px;
+    font-size: 1.8em;
+    flex-shrink: 0;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes flip {
+    0% { transform: rotateX(0); }
+    50% { transform: rotateX(90deg); }
+    100% { transform: rotateX(0); }
+}
+
+.cell.filled {
+    animation: pop 0.1s ease-in-out;
+}
+
+.cell.reveal {
+    animation: flip 0.6s ease-in-out;
+}
+
+.cell.empty {
+    border-color: #565758;
+    background-color: transparent;
+}
+
+.cell.green {
+    background-color: #6aaa64;
+    border-color: #6aaa64;
+    color: white;
+    animation: flip 0.6s ease-in-out;
+}
+
+.cell.yellow {
+    background-color: #c9b458;
+    border-color: #c9b458;
+    color: white;
+    animation: flip 0.6s ease-in-out;
+}
+
+.cell.grey {
+    background-color: #3a3a3c;
+    border-color: #3a3a3c;
+    color: white;
+    animation: flip 0.6s ease-in-out;
+}
+
+.solve-result {
+    margin: 20px auto;
+    max-width: 500px;
+    background: #1a1a1b;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.solve-result h2 {
+    color: #6aaa64;
+    margin-bottom: 10px;
+}
+
+.solve-result p {
+    font-size: 1.1em;
+    margin: 5px 0;
+}
+
+.word-list {
+    margin: 20px auto;
+    max-width: 500px;
+    background: #1a1a1b;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.word-list select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #565758;
+    border-radius: 8px;
+    background-color: #121213;
+    color: white;
+    font-size: 1em;
+}
+
+.word-list select:focus {
+    outline: none;
+    border-color: #6aaa64;
+}
+
+a {
+    color: #6aaa64;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#game-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#back-btn {
+    position: fixed !important;
+    top: 16px !important;
+    left: 16px !important;
+    z-index: 50 !important;
+    padding: 8px 16px !important;
+    font-size: 1em !important;
+}
+
+#new-game-link {
+    display: block;
+    width: fit-content;
+    margin: 20px auto 0 auto;
+    padding: 15px 30px;
+    background-color: #6aaa64;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+#new-game-link:hover {
+    background-color: #5a9a54;
+}
+
+.game-over {
+    margin: 20px auto;
+    max-width: 500px;
+    background: #1a1a1b;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.game-over h2 {
+    color: #c9b458;
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+.game-over p {
+    font-size: 1.1em;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 5px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#solver-status {
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.info-box {
+    margin: 15px auto;
+    padding: 15px;
+    max-width: 500px;
+    background: #1a1a1b;
+    border-radius: 8px;
+    border: 2px solid #3a3a3c;
+    text-align: center;
+}
+
+.info-box p {
+    margin: 5px 0;
+    font-size: 1.1em;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #1a1a1b;
+    border: 1px solid #565758;
+    border-radius: 4px;
+    margin: 2px 0;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #3a3a3c;
+}
+
+#solve-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#solve-buttons button {
+    margin-right: 0;
+}
+
+#new-game-link {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Tablet optimizations (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    body {
+        padding: 20px;
+        font-size: 16px;
+    }
+
+    h1 {
+        font-size: 2.2em;
+        margin-bottom: 20px;
+    }
+
+    form {
+        padding: 25px;
+        margin: 20px auto;
+        max-width: 90%;
+        width: 90%;
+    }
+
+    .board {
+        max-width: 90%;
+        width: 90%;
+    }
+
+    .board.normal-width {
+        max-width: 90%;
+    }
+
+    .info-box, .game-over {
+        max-width: 90%;
+        width: 90%;
+        box-sizing: border-box;
+    }
+
+    .word-list {
+        max-width: 90%;
+        width: 90%;
+    }
+
+    label {
+        font-size: 1.15em;
+        margin-bottom: 12px;
+    }
+
+    select, input[type="text"], input[type="submit"] {
+        padding: 13px;
+        font-size: 1em;
+        margin-bottom: 12px;
+    }
+
+    input[type="submit"] {
+        padding: 14px;
+        font-size: 1.05em;
+    }
+
+    button {
+        padding: 11px 22px;
+        font-size: 0.95em;
+    }
+
+    #solve-buttons {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    #solve-buttons button {
+        margin: 0;
+        flex: 0 1 calc(50% - 6px);
+    }
+
+    .cell {
+        width: clamp(44px, 10vw, 58px);
+        height: clamp(44px, 10vw, 58px);
+        font-size: clamp(1.1em, 3.5vw, 1.8em);
+        margin: 0 3px;
+    }
+
+    .board.long-word .cell {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        min-height: 58px;
+        font-size: 1.6em;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+
+    form {
+        padding: 20px;
+        margin: 15px auto;
+        max-width: 100%;
+        width: calc(100% - 30px);
+    }
+
+    .info-box, .game-over {
+        max-width: 100%;
+        width: calc(100% - 30px);
+        box-sizing: border-box;
+    }
+
+    label {
+        font-size: 1.1em;
+        margin-bottom: 12px;
+    }
+
+    select, input[type="text"], input[type="submit"] {
+        padding: 14px; /* Larger touch targets */
+        font-size: 1em;
+        margin-bottom: 12px;
+    }
+
+    input[type="submit"] {
+        padding: 16px;
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 12px;
+    }
+
+    form {
+        padding: 15px;
+        margin: 10px auto;
+        width: calc(100% - 20px);
+    }
+
+    .info-box, .game-over {
+        width: calc(100% - 20px);
+        padding: 12px;
+    }
+
+    .info-box p, .game-over p {
+        font-size: 1em;
+    }
+
+    label {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+
+    select, input[type="text"], input[type="submit"] {
+        padding: 16px; /* Even larger touch targets for small screens */
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+
+    input[type="submit"] {
+        padding: 18px;
+        font-size: 1.2em;
+    }
+}
+
+/* Make solver and general buttons full-width / touch-friendly on small screens */
+@media (max-width: 480px) {
+    #back-btn {
+        top: 8px !important;
+        left: 8px !important;
+        padding: 6px 12px !important;
+        font-size: 0.9em !important;
+    }
+    button:not(#back-btn), #new-game-link {
+        width: 100%;
+        display: block;
+        margin: 8px 0;
+        padding: 14px 16px;
+        box-sizing: border-box;
+    }
+    .board {
+        padding: 12px;
+        width: calc(100% - 24px);
+        box-sizing: border-box;
+    }
+    #solve-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .row {
+        gap: 2px;
+    }
+    .cell {
+        margin: 0 2px;
+    }
+    .word-list select {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+}
+
+/* Ensure proper viewport handling */
+@media (max-width: 320px) {
+    body {
+        padding: 8px;
+    }
+
+    form {
+        padding: 10px;
+        width: calc(100% - 16px);
+    }
+
+    .info-box, .game-over {
+        width: calc(100% - 16px);
+        padding: 8px;
+    }
+
+    .info-box p, .game-over p {
+        font-size: 0.9em;
+    }
+
+    label {
+        font-size: 1em;
+        margin-bottom: 8px;
+    }
+
+    select, input[type="text"], input[type="submit"] {
+        padding: 14px;
+    }
+
+    input[type="submit"] {
+        padding: 16px;
+    }
+
+    button:not(#back-btn), #new-game-link {
+        padding: 12px 14px;
+    }
+
+    #back-btn {
+        top: 4px !important;
+        left: 4px !important;
+        padding: 4px 8px !important;
+        font-size: 0.8em !important;
+    }
+
+    .board {
+        padding: 8px;
+        width: calc(100% - 16px);
+        box-sizing: border-box;
+    }
+}
