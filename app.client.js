@@ -350,6 +350,18 @@ async function fetchSuggestions(prefix) {
                 }
 
                 cell.textContent = letter;
+
+                // Add click handler for mobile keyboard activation
+                if (rowIndex === activeRow && !state.isGameOver && state.gameActive) {
+                    cell.addEventListener('click', () => {
+                        const guessInput = document.getElementById('guess-input');
+                        if (guessInput) {
+                            guessInput.focus();
+                        }
+                    });
+                    cell.style.cursor = 'pointer';
+                }
+
                 rowEl.appendChild(cell);
             }
 
@@ -380,15 +392,30 @@ async function fetchSuggestions(prefix) {
             updateSolverStatus('Type your guess and press Enter.');
             gameSection.classList.remove('hidden');
             guessForm.classList.remove('hidden');
+            // Focus input for mobile users
+            const guessInput = document.getElementById('guess-input');
+            if (guessInput && window.innerWidth <= 768) {
+                setTimeout(() => guessInput.focus(), 100);
+            }
         } else if (state && state.gameActive && state.isGameOver) {
             updateSolverStatus('Game complete. Start a new game to play again.');
             gameSection.classList.remove('hidden');
             guessForm.classList.add('hidden');
+            // Clear input when game ends
+            const guessInput = document.getElementById('guess-input');
+            if (guessInput) {
+                guessInput.value = '';
+            }
         } else {
             updateSolverStatus('Select a word to start a new game.');
             gameSection.classList.add('hidden');
             guessForm.classList.add('hidden');
             currentGuess = '';
+            // Clear input when no active game
+            const guessInput = document.getElementById('guess-input');
+            if (guessInput) {
+                guessInput.value = '';
+            }
         }
     }
 
@@ -597,6 +624,11 @@ function postJson(path, data) {
         try {
             await postForm('/guess', params);
             currentGuess = '';
+            // Clear the input field
+            const guessInput = document.getElementById('guess-input');
+            if (guessInput) {
+                guessInput.value = '';
+            }
             await refreshState();
             localStorage.setItem('guesses', JSON.stringify(currentState.guesses));
         } catch (error) {
@@ -670,6 +702,40 @@ function postJson(path, data) {
         fetchSuggestions(prefix);
     }
 
+    function handleGuessInput(event) {
+        const input = event.target;
+        const value = input.value.toUpperCase().replace(/[^A-Z]/g, ''); // Only allow letters
+        const maxLength = currentState ? currentState.wordLength || 5 : 5;
+
+        // Limit to max length
+        if (value.length > maxLength) {
+            input.value = value.slice(0, maxLength);
+            currentGuess = value.slice(0, maxLength);
+        } else {
+            currentGuess = value;
+        }
+
+        // Update the board display
+        if (currentState) {
+            renderBoard(currentState);
+        }
+    }
+
+    function handleGuessKeydown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (currentGuess.length === (currentState ? currentState.wordLength || 0 : 0)) {
+                submitGuess();
+            }
+        } else if (event.key === 'Backspace') {
+            // Allow backspace to work normally
+            return;
+        } else if (!LETTER_REGEX.test(event.key) && event.key !== 'Enter' && event.key !== 'Backspace' && event.key !== 'Tab') {
+            // Prevent non-letter keys (except Enter, Backspace, Tab)
+            event.preventDefault();
+        }
+    }
+
     function attachEventHandlers() {
         if (createGameBtn) {
             createGameBtn.addEventListener('click', showCreateGameFlow);
@@ -693,6 +759,14 @@ function postJson(path, data) {
         solveEfficientBtn.addEventListener('click', () => runSolver('efficient'));
         shareGameBtn.addEventListener('click', shareGame);
         window.addEventListener('keydown', handleGlobalKeydown);
+
+        // Add mobile input handling
+        const guessInput = document.getElementById('guess-input');
+        if (guessInput) {
+            guessInput.addEventListener('input', handleGuessInput);
+            guessInput.addEventListener('keydown', handleGuessKeydown);
+        }
+
         if (suggestionsSelect) {
             suggestionsSelect.addEventListener('dblclick', () => {
                 const selectedWord = getSelectedSuggestion();
